@@ -1,0 +1,430 @@
+{
+  "scenarios": [
+    {
+      "id": "clinic-01",
+      "system": "clinic",
+      "change": {
+        "node_id": "mem_guidelines",
+        "kind": "memory_edit",
+        "severity": 1.0,
+        "description": "Guideline memory updated: sepsis threshold lowered",
+        "keys": [
+          "sepsis_threshold"
+        ]
+      }
+    },
+    {
+      "id": "clinic-02",
+      "system": "clinic",
+      "change": {
+        "node_id": "mem_patient_history",
+        "kind": "memory_edit",
+        "severity": 1.0,
+        "description": "Patient history edited: allergy added",
+        "keys": [
+          "allergies"
+        ]
+      }
+    },
+    {
+      "id": "clinic-03",
+      "system": "clinic",
+      "change": {
+        "node_id": "mem_patient_history",
+        "kind": "memory_edit",
+        "severity": 1.0,
+        "description": "Patient history edited: unrelated key changed",
+        "keys": [
+          "insurance_id"
+        ]
+      }
+    },
+    {
+      "id": "clinic-04",
+      "system": "clinic",
+      "change": {
+        "node_id": "mem_drug_db",
+        "kind": "memory_edit",
+        "severity": 1.0,
+        "description": "Drug DB edited: dosage changed",
+        "keys": [
+          "dosage"
+        ]
+      }
+    },
+    {
+      "id": "clinic-05",
+      "system": "clinic",
+      "change": {
+        "node_id": "mem_drug_db",
+        "kind": "memory_edit",
+        "severity": 1.0,
+        "description": "Drug DB edited: supplier note changed",
+        "keys": [
+          "supplier"
+        ]
+      }
+    },
+    {
+      "id": "clinic-06",
+      "system": "clinic",
+      "change": {
+        "node_id": "tool_lab_api",
+        "kind": "tool_update",
+        "severity": 1.0,
+        "description": "Lab API updated: units mg/dL -> mmol/L",
+        "keys": []
+      }
+    },
+    {
+      "id": "clinic-07",
+      "system": "clinic",
+      "change": {
+        "node_id": "model_triage",
+        "kind": "model_swap",
+        "severity": 0.8,
+        "description": "Triage model swapped to distilled model",
+        "keys": []
+      }
+    },
+    {
+      "id": "clinic-08",
+      "system": "clinic",
+      "change": {
+        "node_id": "model_triage",
+        "kind": "model_swap",
+        "severity": 0.3,
+        "description": "Triage model swapped, small behaviour delta",
+        "keys": []
+      }
+    },
+    {
+      "id": "clinic-09",
+      "system": "clinic",
+      "change": {
+        "node_id": "prompt_triage",
+        "kind": "prompt_change",
+        "severity": 1.0,
+        "description": "Triage prompt rewritten",
+        "keys": []
+      }
+    },
+    {
+      "id": "clinic-10",
+      "system": "clinic",
+      "change": {
+        "node_id": "config_thresholds",
+        "kind": "config_change",
+        "severity": 1.0,
+        "description": "Triage thresholds reconfigured",
+        "keys": []
+      }
+    },
+    {
+      "id": "clinic-11",
+      "system": "clinic",
+      "change": {
+        "node_id": "mem_guidelines",
+        "kind": "memory_edit",
+        "severity": 0.3,
+        "description": "Guideline memory: minor wording edit",
+        "keys": [
+          "sepsis_threshold"
+        ]
+      }
+    },
+    {
+      "id": "clinic-12",
+      "system": "clinic",
+      "change": {
+        "node_id": "tool_vitals",
+        "kind": "tool_update",
+        "severity": 1.0,
+        "description": "Vitals monitor firmware updated",
+        "keys": []
+      }
+    },
+    {
+      "id": "research-01",
+      "system": "research",
+      "change": {
+        "node_id": "mem_papers",
+        "kind": "memory_edit",
+        "severity": 1.0,
+        "description": "Paper store edited: cs.AI paper added",
+        "keys": [
+          "cs.AI"
+        ]
+      }
+    },
+    {
+      "id": "research-02",
+      "system": "research",
+      "change": {
+        "node_id": "mem_papers",
+        "kind": "memory_edit",
+        "severity": 1.0,
+        "description": "Paper store edited: unrelated field changed",
+        "keys": [
+          "cs.CV"
+        ]
+      }
+    },
+    {
+      "id": "research-03",
+      "system": "research",
+      "change": {
+        "node_id": "mem_citations",
+        "kind": "memory_edit",
+        "severity": 1.0,
+        "description": "Citation store edited: DOI corrected",
+        "keys": [
+          "doi"
+        ]
+      }
+    },
+    {
+      "id": "research-04",
+      "system": "research",
+      "change": {
+        "node_id": "mem_notes",
+        "kind": "memory_edit",
+        "severity": 1.0,
+        "description": "Research notes edited",
+        "keys": []
+      }
+    },
+    {
+      "id": "research-05",
+      "system": "research",
+      "change": {
+        "node_id": "tool_arxiv",
+        "kind": "tool_update",
+        "severity": 1.0,
+        "description": "arXiv tool updated: new API version",
+        "keys": []
+      }
+    },
+    {
+      "id": "research-06",
+      "system": "research",
+      "change": {
+        "node_id": "tool_vector_db",
+        "kind": "tool_update",
+        "severity": 1.0,
+        "description": "Vector DB re-indexed with new embeddings",
+        "keys": [
+          "embeddings"
+        ]
+      }
+    },
+    {
+      "id": "research-07",
+      "system": "research",
+      "change": {
+        "node_id": "model_writer",
+        "kind": "model_swap",
+        "severity": 0.8,
+        "description": "Writer model swapped",
+        "keys": []
+      }
+    },
+    {
+      "id": "research-08",
+      "system": "research",
+      "change": {
+        "node_id": "model_search",
+        "kind": "model_swap",
+        "severity": 0.3,
+        "description": "Search model swapped, small behaviour delta",
+        "keys": []
+      }
+    },
+    {
+      "id": "research-09",
+      "system": "research",
+      "change": {
+        "node_id": "prompt_writer",
+        "kind": "prompt_change",
+        "severity": 1.0,
+        "description": "Writer prompt rewritten",
+        "keys": []
+      }
+    },
+    {
+      "id": "research-10",
+      "system": "research",
+      "change": {
+        "node_id": "config_style",
+        "kind": "config_change",
+        "severity": 1.0,
+        "description": "Citation style reconfigured",
+        "keys": []
+      }
+    },
+    {
+      "id": "research-11",
+      "system": "research",
+      "change": {
+        "node_id": "tool_web_search",
+        "kind": "tool_update",
+        "severity": 1.0,
+        "description": "Web search tool updated",
+        "keys": []
+      }
+    },
+    {
+      "id": "research-12",
+      "system": "research",
+      "change": {
+        "node_id": "mem_notes",
+        "kind": "memory_edit",
+        "severity": 0.3,
+        "description": "Research notes: minor edit",
+        "keys": []
+      }
+    },
+    {
+      "id": "phm-01",
+      "system": "phm",
+      "change": {
+        "node_id": "mem_baselines",
+        "kind": "memory_edit",
+        "severity": 1.0,
+        "description": "Sensor baselines recalibrated: vibration",
+        "keys": [
+          "vibration"
+        ]
+      }
+    },
+    {
+      "id": "phm-02",
+      "system": "phm",
+      "change": {
+        "node_id": "mem_baselines",
+        "kind": "memory_edit",
+        "severity": 1.0,
+        "description": "Sensor baselines edited: unrelated key",
+        "keys": [
+          "humidity"
+        ]
+      }
+    },
+    {
+      "id": "phm-03",
+      "system": "phm",
+      "change": {
+        "node_id": "mem_failure_modes",
+        "kind": "memory_edit",
+        "severity": 1.0,
+        "description": "Failure-mode library: bearing mode updated",
+        "keys": [
+          "bearing"
+        ]
+      }
+    },
+    {
+      "id": "phm-04",
+      "system": "phm",
+      "change": {
+        "node_id": "mem_maintenance_history",
+        "kind": "memory_edit",
+        "severity": 1.0,
+        "description": "Maintenance history: repair record added",
+        "keys": [
+          "repairs"
+        ]
+      }
+    },
+    {
+      "id": "phm-05",
+      "system": "phm",
+      "change": {
+        "node_id": "tool_vibration",
+        "kind": "tool_update",
+        "severity": 1.0,
+        "description": "Vibration feed updated: sampling rate doubled",
+        "keys": []
+      }
+    },
+    {
+      "id": "phm-06",
+      "system": "phm",
+      "change": {
+        "node_id": "tool_logs",
+        "kind": "tool_update",
+        "severity": 1.0,
+        "description": "Log reader updated",
+        "keys": []
+      }
+    },
+    {
+      "id": "phm-07",
+      "system": "phm",
+      "change": {
+        "node_id": "model_rul",
+        "kind": "model_swap",
+        "severity": 0.8,
+        "description": "RUL model swapped to a retrained version",
+        "keys": []
+      }
+    },
+    {
+      "id": "phm-08",
+      "system": "phm",
+      "change": {
+        "node_id": "model_anomaly",
+        "kind": "model_swap",
+        "severity": 0.3,
+        "description": "Anomaly model swapped, small behaviour delta",
+        "keys": []
+      }
+    },
+    {
+      "id": "phm-09",
+      "system": "phm",
+      "change": {
+        "node_id": "prompt_report",
+        "kind": "prompt_change",
+        "severity": 1.0,
+        "description": "Report prompt rewritten",
+        "keys": []
+      }
+    },
+    {
+      "id": "phm-10",
+      "system": "phm",
+      "change": {
+        "node_id": "config_thresholds",
+        "kind": "config_change",
+        "severity": 1.0,
+        "description": "Alert thresholds reconfigured",
+        "keys": []
+      }
+    },
+    {
+      "id": "phm-11",
+      "system": "phm",
+      "change": {
+        "node_id": "mem_failure_modes",
+        "kind": "memory_edit",
+        "severity": 0.3,
+        "description": "Failure-mode library: minor note edit",
+        "keys": [
+          "bearing"
+        ]
+      }
+    },
+    {
+      "id": "phm-12",
+      "system": "phm",
+      "change": {
+        "node_id": "tool_temperature",
+        "kind": "tool_update",
+        "severity": 1.0,
+        "description": "Temperature feed updated",
+        "keys": []
+      }
+    }
+  ]
+}
