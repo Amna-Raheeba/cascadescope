@@ -1,0 +1,482 @@
+{
+  "name": "research",
+  "nodes": [
+    {
+      "id": "model_search",
+      "kind": "model",
+      "label": "Search LLM",
+      "transfer": {
+        "type": "scale",
+        "factor": 0.9
+      }
+    },
+    {
+      "id": "model_writer",
+      "kind": "model",
+      "label": "Writer LLM",
+      "transfer": {
+        "type": "scale",
+        "factor": 0.85
+      }
+    },
+    {
+      "id": "prompt_search",
+      "kind": "prompt",
+      "label": "Search prompt",
+      "transfer": {
+        "type": "passthrough"
+      }
+    },
+    {
+      "id": "prompt_writer",
+      "kind": "prompt",
+      "label": "Writer prompt",
+      "transfer": {
+        "type": "passthrough"
+      }
+    },
+    {
+      "id": "config_style",
+      "kind": "config",
+      "label": "Citation style config",
+      "transfer": {
+        "type": "passthrough"
+      }
+    },
+    {
+      "id": "agent_planner",
+      "kind": "agent",
+      "label": "Research planner",
+      "transfer": {
+        "type": "passthrough"
+      }
+    },
+    {
+      "id": "tool_web_search",
+      "kind": "tool",
+      "label": "Web search tool",
+      "transfer": {
+        "type": "scale",
+        "factor": 0.9
+      }
+    },
+    {
+      "id": "tool_arxiv",
+      "kind": "tool",
+      "label": "arXiv lookup tool",
+      "transfer": {
+        "type": "keyed",
+        "keys": [
+          "cs.AI",
+          "cs.LG",
+          "stat.ML"
+        ]
+      }
+    },
+    {
+      "id": "tool_vector_db",
+      "kind": "tool",
+      "label": "Vector DB retrieval",
+      "transfer": {
+        "type": "keyed",
+        "keys": [
+          "embeddings",
+          "chunks"
+        ]
+      }
+    },
+    {
+      "id": "mem_papers",
+      "kind": "memory",
+      "label": "Paper store",
+      "transfer": {
+        "type": "keyed",
+        "keys": [
+          "cs.AI",
+          "cs.LG",
+          "stat.ML"
+        ]
+      }
+    },
+    {
+      "id": "mem_notes",
+      "kind": "memory",
+      "label": "Research notes",
+      "transfer": {
+        "type": "passthrough"
+      }
+    },
+    {
+      "id": "mem_citations",
+      "kind": "memory",
+      "label": "Citation store",
+      "transfer": {
+        "type": "keyed",
+        "keys": [
+          "bibtex",
+          "doi"
+        ]
+      }
+    },
+    {
+      "id": "agent_searcher",
+      "kind": "agent",
+      "label": "Searcher agent",
+      "transfer": {
+        "type": "threshold",
+        "threshold": 0.5
+      }
+    },
+    {
+      "id": "plan_outline",
+      "kind": "plan",
+      "label": "Report outline",
+      "transfer": {
+        "type": "passthrough"
+      }
+    },
+    {
+      "id": "agent_writer",
+      "kind": "agent",
+      "label": "Writer agent",
+      "transfer": {
+        "type": "passthrough"
+      }
+    },
+    {
+      "id": "agent_critic",
+      "kind": "agent",
+      "label": "Critic agent",
+      "transfer": {
+        "type": "threshold",
+        "threshold": 0.6
+      }
+    },
+    {
+      "id": "decision_include",
+      "kind": "decision",
+      "label": "Include-paper decision",
+      "transfer": {
+        "type": "threshold",
+        "threshold": 0.4
+      }
+    },
+    {
+      "id": "decision_cite",
+      "kind": "decision",
+      "label": "Cite decision",
+      "transfer": {
+        "type": "threshold",
+        "threshold": 0.5
+      }
+    },
+    {
+      "id": "tool_formatter",
+      "kind": "tool",
+      "label": "Formatter tool",
+      "transfer": {
+        "type": "scale",
+        "factor": 0.5
+      }
+    },
+    {
+      "id": "mem_audit",
+      "kind": "memory",
+      "label": "Audit log",
+      "transfer": {
+        "type": "absorbing"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "model_search",
+      "target": "agent_searcher",
+      "edge_type": "drives",
+      "attenuation": 0.9,
+      "gate": [
+        "model_swap"
+      ]
+    },
+    {
+      "source": "model_writer",
+      "target": "agent_writer",
+      "edge_type": "drives",
+      "attenuation": 0.85,
+      "gate": [
+        "model_swap"
+      ]
+    },
+    {
+      "source": "prompt_search",
+      "target": "agent_searcher",
+      "edge_type": "drives",
+      "attenuation": 0.9,
+      "gate": [
+        "prompt_change"
+      ]
+    },
+    {
+      "source": "prompt_writer",
+      "target": "agent_writer",
+      "edge_type": "drives",
+      "attenuation": 0.9,
+      "gate": [
+        "prompt_change"
+      ]
+    },
+    {
+      "source": "config_style",
+      "target": "tool_formatter",
+      "edge_type": "configures",
+      "attenuation": 0.8,
+      "gate": [
+        "config_change"
+      ]
+    },
+    {
+      "source": "agent_planner",
+      "target": "agent_searcher",
+      "edge_type": "delegates",
+      "attenuation": 1.0,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "agent_planner",
+      "target": "plan_outline",
+      "edge_type": "writes",
+      "attenuation": 1.0,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "tool_web_search",
+      "target": "agent_searcher",
+      "edge_type": "feeds",
+      "attenuation": 0.9,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "tool_arxiv",
+      "target": "agent_searcher",
+      "edge_type": "feeds",
+      "attenuation": 0.9,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "tool_vector_db",
+      "target": "agent_searcher",
+      "edge_type": "feeds",
+      "attenuation": 0.9,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "mem_papers",
+      "target": "tool_arxiv",
+      "edge_type": "read_by",
+      "attenuation": 1.0,
+      "gate": [
+        "memory_edit"
+      ]
+    },
+    {
+      "source": "mem_notes",
+      "target": "agent_searcher",
+      "edge_type": "read_by",
+      "attenuation": 0.9,
+      "gate": [
+        "memory_edit"
+      ]
+    },
+    {
+      "source": "mem_notes",
+      "target": "agent_writer",
+      "edge_type": "read_by",
+      "attenuation": 0.9,
+      "gate": [
+        "memory_edit"
+      ]
+    },
+    {
+      "source": "agent_searcher",
+      "target": "decision_include",
+      "edge_type": "feeds",
+      "attenuation": 1.0,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "agent_searcher",
+      "target": "plan_outline",
+      "edge_type": "feeds",
+      "attenuation": 0.9,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "decision_include",
+      "target": "agent_writer",
+      "edge_type": "gates",
+      "attenuation": 0.9,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "plan_outline",
+      "target": "agent_writer",
+      "edge_type": "feeds",
+      "attenuation": 1.0,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "agent_writer",
+      "target": "agent_critic",
+      "edge_type": "feeds",
+      "attenuation": 1.0,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "agent_writer",
+      "target": "decision_cite",
+      "edge_type": "feeds",
+      "attenuation": 0.9,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "agent_critic",
+      "target": "agent_writer",
+      "edge_type": "amends",
+      "attenuation": 0.8,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "mem_citations",
+      "target": "decision_cite",
+      "edge_type": "read_by",
+      "attenuation": 1.0,
+      "gate": [
+        "memory_edit"
+      ]
+    },
+    {
+      "source": "decision_cite",
+      "target": "tool_formatter",
+      "edge_type": "feeds",
+      "attenuation": 0.9,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "agent_writer",
+      "target": "tool_formatter",
+      "edge_type": "feeds",
+      "attenuation": 0.8,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "tool_formatter",
+      "target": "mem_audit",
+      "edge_type": "logged_by",
+      "attenuation": 1.0,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "agent_critic",
+      "target": "mem_audit",
+      "edge_type": "logged_by",
+      "attenuation": 1.0,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    }
+  ]
+}

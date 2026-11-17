@@ -1,0 +1,581 @@
+{
+  "name": "phm",
+  "nodes": [
+    {
+      "id": "model_rul",
+      "kind": "model",
+      "label": "RUL prediction model",
+      "transfer": {
+        "type": "scale",
+        "factor": 0.9
+      }
+    },
+    {
+      "id": "model_anomaly",
+      "kind": "model",
+      "label": "Anomaly detection model",
+      "transfer": {
+        "type": "scale",
+        "factor": 0.85
+      }
+    },
+    {
+      "id": "prompt_report",
+      "kind": "prompt",
+      "label": "Report prompt",
+      "transfer": {
+        "type": "passthrough"
+      }
+    },
+    {
+      "id": "config_thresholds",
+      "kind": "config",
+      "label": "Alert thresholds",
+      "transfer": {
+        "type": "passthrough"
+      }
+    },
+    {
+      "id": "agent_monitor",
+      "kind": "agent",
+      "label": "Monitoring agent",
+      "transfer": {
+        "type": "passthrough"
+      }
+    },
+    {
+      "id": "tool_vibration",
+      "kind": "tool",
+      "label": "Vibration sensor feed",
+      "transfer": {
+        "type": "scale",
+        "factor": 0.9
+      }
+    },
+    {
+      "id": "tool_temperature",
+      "kind": "tool",
+      "label": "Temperature sensor feed",
+      "transfer": {
+        "type": "passthrough"
+      }
+    },
+    {
+      "id": "tool_logs",
+      "kind": "tool",
+      "label": "System log reader",
+      "transfer": {
+        "type": "keyed",
+        "keys": [
+          "errors",
+          "warnings"
+        ]
+      }
+    },
+    {
+      "id": "mem_baselines",
+      "kind": "memory",
+      "label": "Sensor baselines",
+      "transfer": {
+        "type": "keyed",
+        "keys": [
+          "vibration",
+          "temperature"
+        ]
+      }
+    },
+    {
+      "id": "mem_failure_modes",
+      "kind": "memory",
+      "label": "Failure-mode library",
+      "transfer": {
+        "type": "keyed",
+        "keys": [
+          "bearing",
+          "motor",
+          "pump"
+        ]
+      }
+    },
+    {
+      "id": "mem_maintenance_history",
+      "kind": "memory",
+      "label": "Maintenance history",
+      "transfer": {
+        "type": "keyed",
+        "keys": [
+          "repairs",
+          "replacements"
+        ]
+      }
+    },
+    {
+      "id": "agent_diagnoser",
+      "kind": "agent",
+      "label": "Diagnoser agent",
+      "transfer": {
+        "type": "threshold",
+        "threshold": 0.5
+      }
+    },
+    {
+      "id": "plan_maintenance",
+      "kind": "plan",
+      "label": "Maintenance plan",
+      "transfer": {
+        "type": "passthrough"
+      }
+    },
+    {
+      "id": "decision_replace",
+      "kind": "decision",
+      "label": "Replace-part decision",
+      "transfer": {
+        "type": "threshold",
+        "threshold": 0.6
+      }
+    },
+    {
+      "id": "decision_schedule",
+      "kind": "decision",
+      "label": "Schedule decision",
+      "transfer": {
+        "type": "threshold",
+        "threshold": 0.4
+      }
+    },
+    {
+      "id": "decision_escalate",
+      "kind": "decision",
+      "label": "Escalate decision",
+      "transfer": {
+        "type": "threshold",
+        "threshold": 0.7
+      }
+    },
+    {
+      "id": "tool_workorder",
+      "kind": "tool",
+      "label": "Work-order tool",
+      "transfer": {
+        "type": "passthrough"
+      }
+    },
+    {
+      "id": "tool_inventory",
+      "kind": "tool",
+      "label": "Spare-parts inventory",
+      "transfer": {
+        "type": "keyed",
+        "keys": [
+          "bearing",
+          "motor",
+          "pump"
+        ]
+      }
+    },
+    {
+      "id": "tool_dashboard",
+      "kind": "tool",
+      "label": "Dashboard renderer",
+      "transfer": {
+        "type": "scale",
+        "factor": 0.5
+      }
+    },
+    {
+      "id": "agent_scheduler",
+      "kind": "agent",
+      "label": "Scheduler agent",
+      "transfer": {
+        "type": "scale",
+        "factor": 0.8
+      }
+    },
+    {
+      "id": "agent_planner",
+      "kind": "agent",
+      "label": "Maintenance planner agent",
+      "transfer": {
+        "type": "passthrough"
+      }
+    },
+    {
+      "id": "agent_reporter",
+      "kind": "agent",
+      "label": "Reporter agent",
+      "transfer": {
+        "type": "passthrough"
+      }
+    },
+    {
+      "id": "tool_alerts",
+      "kind": "tool",
+      "label": "Alerting tool",
+      "transfer": {
+        "type": "threshold",
+        "threshold": 0.7
+      }
+    },
+    {
+      "id": "mem_audit",
+      "kind": "memory",
+      "label": "Audit log",
+      "transfer": {
+        "type": "absorbing"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "model_rul",
+      "target": "agent_diagnoser",
+      "edge_type": "drives",
+      "attenuation": 0.9,
+      "gate": [
+        "model_swap"
+      ]
+    },
+    {
+      "source": "model_anomaly",
+      "target": "agent_monitor",
+      "edge_type": "drives",
+      "attenuation": 0.85,
+      "gate": [
+        "model_swap"
+      ]
+    },
+    {
+      "source": "config_thresholds",
+      "target": "agent_monitor",
+      "edge_type": "configures",
+      "attenuation": 0.8,
+      "gate": [
+        "config_change"
+      ]
+    },
+    {
+      "source": "config_thresholds",
+      "target": "decision_escalate",
+      "edge_type": "configures",
+      "attenuation": 0.8,
+      "gate": [
+        "config_change"
+      ]
+    },
+    {
+      "source": "tool_vibration",
+      "target": "agent_monitor",
+      "edge_type": "feeds",
+      "attenuation": 0.9,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "tool_temperature",
+      "target": "agent_monitor",
+      "edge_type": "feeds",
+      "attenuation": 0.9,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "tool_logs",
+      "target": "agent_monitor",
+      "edge_type": "feeds",
+      "attenuation": 0.9,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "mem_baselines",
+      "target": "tool_vibration",
+      "edge_type": "read_by",
+      "attenuation": 1.0,
+      "gate": [
+        "memory_edit"
+      ]
+    },
+    {
+      "source": "mem_baselines",
+      "target": "tool_temperature",
+      "edge_type": "read_by",
+      "attenuation": 1.0,
+      "gate": [
+        "memory_edit"
+      ]
+    },
+    {
+      "source": "agent_monitor",
+      "target": "agent_diagnoser",
+      "edge_type": "feeds",
+      "attenuation": 1.0,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "agent_monitor",
+      "target": "decision_escalate",
+      "edge_type": "feeds",
+      "attenuation": 0.9,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "mem_failure_modes",
+      "target": "agent_diagnoser",
+      "edge_type": "read_by",
+      "attenuation": 0.9,
+      "gate": [
+        "memory_edit"
+      ]
+    },
+    {
+      "source": "mem_maintenance_history",
+      "target": "agent_planner",
+      "edge_type": "read_by",
+      "attenuation": 0.9,
+      "gate": [
+        "memory_edit"
+      ]
+    },
+    {
+      "source": "agent_diagnoser",
+      "target": "plan_maintenance",
+      "edge_type": "writes",
+      "attenuation": 1.0,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "agent_diagnoser",
+      "target": "decision_replace",
+      "edge_type": "feeds",
+      "attenuation": 1.0,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "plan_maintenance",
+      "target": "decision_schedule",
+      "edge_type": "feeds",
+      "attenuation": 0.9,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "plan_maintenance",
+      "target": "decision_replace",
+      "edge_type": "feeds",
+      "attenuation": 0.9,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "decision_replace",
+      "target": "tool_workorder",
+      "edge_type": "feeds",
+      "attenuation": 0.9,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "decision_replace",
+      "target": "tool_inventory",
+      "edge_type": "feeds",
+      "attenuation": 0.8,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "mem_failure_modes",
+      "target": "tool_inventory",
+      "edge_type": "read_by",
+      "attenuation": 1.0,
+      "gate": [
+        "memory_edit"
+      ]
+    },
+    {
+      "source": "decision_schedule",
+      "target": "agent_scheduler",
+      "edge_type": "gates",
+      "attenuation": 0.9,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "agent_scheduler",
+      "target": "agent_planner",
+      "edge_type": "feeds",
+      "attenuation": 0.8,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "agent_planner",
+      "target": "plan_maintenance",
+      "edge_type": "amends",
+      "attenuation": 0.9,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "plan_maintenance",
+      "target": "agent_reporter",
+      "edge_type": "feeds",
+      "attenuation": 0.9,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "prompt_report",
+      "target": "agent_reporter",
+      "edge_type": "drives",
+      "attenuation": 0.9,
+      "gate": [
+        "prompt_change"
+      ]
+    },
+    {
+      "source": "agent_reporter",
+      "target": "tool_dashboard",
+      "edge_type": "feeds",
+      "attenuation": 0.8,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "decision_escalate",
+      "target": "tool_alerts",
+      "edge_type": "feeds",
+      "attenuation": 0.9,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "agent_monitor",
+      "target": "tool_alerts",
+      "edge_type": "feeds",
+      "attenuation": 0.9,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "plan_maintenance",
+      "target": "mem_audit",
+      "edge_type": "logged_by",
+      "attenuation": 1.0,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "decision_replace",
+      "target": "mem_audit",
+      "edge_type": "logged_by",
+      "attenuation": 1.0,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    }
+  ]
+}

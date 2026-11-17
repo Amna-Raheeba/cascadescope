@@ -1,0 +1,542 @@
+{
+  "name": "clinic",
+  "nodes": [
+    {
+      "id": "model_triage",
+      "kind": "model",
+      "label": "Triage LLM",
+      "transfer": {
+        "type": "scale",
+        "factor": 0.9
+      }
+    },
+    {
+      "id": "prompt_triage",
+      "kind": "prompt",
+      "label": "Triage prompt",
+      "transfer": {
+        "type": "passthrough"
+      }
+    },
+    {
+      "id": "config_thresholds",
+      "kind": "config",
+      "label": "Triage thresholds",
+      "transfer": {
+        "type": "passthrough"
+      }
+    },
+    {
+      "id": "agent_intake",
+      "kind": "agent",
+      "label": "Intake agent",
+      "transfer": {
+        "type": "passthrough"
+      }
+    },
+    {
+      "id": "tool_vitals",
+      "kind": "tool",
+      "label": "Vitals monitor",
+      "transfer": {
+        "type": "passthrough"
+      }
+    },
+    {
+      "id": "tool_lab_api",
+      "kind": "tool",
+      "label": "Lab results API",
+      "transfer": {
+        "type": "scale",
+        "factor": 0.9
+      }
+    },
+    {
+      "id": "tool_ehr_lookup",
+      "kind": "tool",
+      "label": "EHR lookup",
+      "transfer": {
+        "type": "keyed",
+        "keys": [
+          "allergies",
+          "meds",
+          "history"
+        ]
+      }
+    },
+    {
+      "id": "mem_patient_history",
+      "kind": "memory",
+      "label": "Patient history store",
+      "transfer": {
+        "type": "keyed",
+        "keys": [
+          "allergies",
+          "meds",
+          "history"
+        ]
+      }
+    },
+    {
+      "id": "mem_guidelines",
+      "kind": "memory",
+      "label": "Clinical guidelines store",
+      "transfer": {
+        "type": "passthrough"
+      }
+    },
+    {
+      "id": "mem_drug_db",
+      "kind": "memory",
+      "label": "Drug database",
+      "transfer": {
+        "type": "keyed",
+        "keys": [
+          "dosage",
+          "interactions"
+        ]
+      }
+    },
+    {
+      "id": "agent_triage",
+      "kind": "agent",
+      "label": "Triage agent",
+      "transfer": {
+        "type": "threshold",
+        "threshold": 0.5
+      }
+    },
+    {
+      "id": "plan_care",
+      "kind": "plan",
+      "label": "Care plan",
+      "transfer": {
+        "type": "passthrough"
+      }
+    },
+    {
+      "id": "decision_admit",
+      "kind": "decision",
+      "label": "Admit decision",
+      "transfer": {
+        "type": "threshold",
+        "threshold": 0.6
+      }
+    },
+    {
+      "id": "decision_referral",
+      "kind": "decision",
+      "label": "Referral decision",
+      "transfer": {
+        "type": "threshold",
+        "threshold": 0.4
+      }
+    },
+    {
+      "id": "tool_pharmacy",
+      "kind": "tool",
+      "label": "Pharmacy order tool",
+      "transfer": {
+        "type": "keyed",
+        "keys": [
+          "dosage",
+          "interactions"
+        ]
+      }
+    },
+    {
+      "id": "agent_pharmacist",
+      "kind": "agent",
+      "label": "Pharmacist agent",
+      "transfer": {
+        "type": "keyed",
+        "keys": [
+          "dosage",
+          "interactions"
+        ]
+      }
+    },
+    {
+      "id": "agent_discharge",
+      "kind": "agent",
+      "label": "Discharge agent",
+      "transfer": {
+        "type": "scale",
+        "factor": 0.8
+      }
+    },
+    {
+      "id": "decision_discharge",
+      "kind": "decision",
+      "label": "Discharge decision",
+      "transfer": {
+        "type": "threshold",
+        "threshold": 0.5
+      }
+    },
+    {
+      "id": "tool_billing",
+      "kind": "tool",
+      "label": "Billing coder",
+      "transfer": {
+        "type": "scale",
+        "factor": 0.5
+      }
+    },
+    {
+      "id": "tool_alerts",
+      "kind": "tool",
+      "label": "Alerting tool",
+      "transfer": {
+        "type": "threshold",
+        "threshold": 0.7
+      }
+    },
+    {
+      "id": "prompt_discharge",
+      "kind": "prompt",
+      "label": "Discharge prompt",
+      "transfer": {
+        "type": "passthrough"
+      }
+    },
+    {
+      "id": "mem_audit_log",
+      "kind": "memory",
+      "label": "Audit log",
+      "transfer": {
+        "type": "absorbing"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "model_triage",
+      "target": "agent_triage",
+      "edge_type": "drives",
+      "attenuation": 0.9,
+      "gate": [
+        "model_swap"
+      ]
+    },
+    {
+      "source": "prompt_triage",
+      "target": "agent_triage",
+      "edge_type": "drives",
+      "attenuation": 0.9,
+      "gate": [
+        "prompt_change"
+      ]
+    },
+    {
+      "source": "config_thresholds",
+      "target": "agent_triage",
+      "edge_type": "configures",
+      "attenuation": 0.8,
+      "gate": [
+        "config_change"
+      ]
+    },
+    {
+      "source": "agent_intake",
+      "target": "agent_triage",
+      "edge_type": "hands_off",
+      "attenuation": 1.0,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "tool_vitals",
+      "target": "agent_intake",
+      "edge_type": "feeds",
+      "attenuation": 0.9,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "tool_lab_api",
+      "target": "agent_triage",
+      "edge_type": "feeds",
+      "attenuation": 0.8,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "tool_ehr_lookup",
+      "target": "agent_triage",
+      "edge_type": "feeds",
+      "attenuation": 0.9,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "mem_patient_history",
+      "target": "tool_ehr_lookup",
+      "edge_type": "read_by",
+      "attenuation": 1.0,
+      "gate": [
+        "memory_edit"
+      ]
+    },
+    {
+      "source": "mem_guidelines",
+      "target": "agent_triage",
+      "edge_type": "read_by",
+      "attenuation": 0.9,
+      "gate": [
+        "memory_edit"
+      ]
+    },
+    {
+      "source": "mem_guidelines",
+      "target": "plan_care",
+      "edge_type": "read_by",
+      "attenuation": 0.9,
+      "gate": [
+        "memory_edit"
+      ]
+    },
+    {
+      "source": "agent_triage",
+      "target": "plan_care",
+      "edge_type": "writes",
+      "attenuation": 1.0,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "agent_triage",
+      "target": "decision_admit",
+      "edge_type": "feeds",
+      "attenuation": 1.0,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "agent_triage",
+      "target": "tool_alerts",
+      "edge_type": "feeds",
+      "attenuation": 0.9,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "plan_care",
+      "target": "decision_admit",
+      "edge_type": "feeds",
+      "attenuation": 0.9,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "plan_care",
+      "target": "decision_referral",
+      "edge_type": "feeds",
+      "attenuation": 0.8,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "plan_care",
+      "target": "tool_pharmacy",
+      "edge_type": "feeds",
+      "attenuation": 0.9,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "mem_drug_db",
+      "target": "tool_pharmacy",
+      "edge_type": "read_by",
+      "attenuation": 1.0,
+      "gate": [
+        "memory_edit"
+      ]
+    },
+    {
+      "source": "mem_drug_db",
+      "target": "agent_pharmacist",
+      "edge_type": "read_by",
+      "attenuation": 0.9,
+      "gate": [
+        "memory_edit"
+      ]
+    },
+    {
+      "source": "tool_pharmacy",
+      "target": "agent_pharmacist",
+      "edge_type": "feeds",
+      "attenuation": 0.9,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "agent_pharmacist",
+      "target": "plan_care",
+      "edge_type": "amends",
+      "attenuation": 0.8,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "decision_admit",
+      "target": "agent_discharge",
+      "edge_type": "gates",
+      "attenuation": 0.8,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "decision_admit",
+      "target": "tool_billing",
+      "edge_type": "feeds",
+      "attenuation": 0.7,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "decision_referral",
+      "target": "agent_discharge",
+      "edge_type": "gates",
+      "attenuation": 0.7,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "agent_discharge",
+      "target": "decision_discharge",
+      "edge_type": "feeds",
+      "attenuation": 0.9,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "prompt_discharge",
+      "target": "agent_discharge",
+      "edge_type": "drives",
+      "attenuation": 0.9,
+      "gate": [
+        "prompt_change"
+      ]
+    },
+    {
+      "source": "decision_discharge",
+      "target": "tool_billing",
+      "edge_type": "feeds",
+      "attenuation": 0.6,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "plan_care",
+      "target": "mem_audit_log",
+      "edge_type": "logged_by",
+      "attenuation": 1.0,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    },
+    {
+      "source": "decision_admit",
+      "target": "mem_audit_log",
+      "edge_type": "logged_by",
+      "attenuation": 1.0,
+      "gate": [
+        "tool_update",
+        "memory_edit",
+        "prompt_change",
+        "model_swap",
+        "config_change"
+      ]
+    }
+  ]
+}
